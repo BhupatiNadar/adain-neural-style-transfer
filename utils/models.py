@@ -1,9 +1,9 @@
 import torch
 import torch.nn  as nn
 
-class VGGEcoder(nn.Module):
+class VGGEncoder(nn.Module):
     def __init__(self,vgg_path):
-        super(VGGEcoder,self).__init__()
+        super(VGGEncoder,self).__init__()
         
         self.vgg = nn.Sequential(
             
@@ -77,9 +77,9 @@ class VGGEcoder(nn.Module):
             nn.ReLU()  # relu5-4
         )
         
-        self.vgg.load_state_dict(torch.load(vgg_path))
+        self.vgg.load_state_dict(torch.load(vgg_path,weights_only=True))
         self.vgg=nn.Sequential(*list(self.vgg.children())[:31])
-        enc_layers=list(self.vgg.children())[:32]
+        enc_layers=list(self.vgg.children())
         self.enc1=nn.Sequential(*enc_layers[:4])
         self.enc2=nn.Sequential(*enc_layers[4:11])
         self.enc3=nn.Sequential(*enc_layers[11:18])

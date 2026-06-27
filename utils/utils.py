@@ -8,7 +8,7 @@ class ImageFolderDataset(Dataset):
     def __init__(self,root,transform=None):
         super(ImageFolderDataset,self).__init__()
         self.root=root
-        self.tansform=transform
+        self.transform=transform
         self.file=list(os.listdir(self.root))
         self.file=[p for p in self.file if p.endswith(('.jpg','.png','.jpeg'))]
         
@@ -20,21 +20,19 @@ class ImageFolderDataset(Dataset):
         image_path=os.path.join(self.root,self.file[idx])
         image=Image.open(image_path).convert('RGB')
         
-        if self.tansform:
-            image=self.tansform(image)
+        if self.transform:
+            image=self.transform(image)
             
         return image
     
 
 def get_transform(size,crop,final_size):
     transform_list=[]
-    if size > 0:
-        transform_list.append(transforms.Resize(size))
     
     if crop:
-        transform_list.append(transforms.Resize(final_size))
+        if size > 0:
+            transform_list.append(transforms.Resize(size))
         transform_list.append(transforms.RandomCrop(final_size))
-    
     else:
         transform_list.append(transforms.Resize(final_size))
         
@@ -42,7 +40,7 @@ def get_transform(size,crop,final_size):
     
     return transforms.Compose(transform_list)
 
-def adaptive_instance_normalication(content_feat,style_feat):
+def adaptive_instance_normalization(content_feat,style_feat):
     # [batch size,chanels,h,w]
     size=content_feat.size()
     style_mean,style_std=calc_mean_std(style_feat)

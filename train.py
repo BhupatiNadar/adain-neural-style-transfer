@@ -4,7 +4,7 @@ from torch.utils.data import DataLoader
 from pathlib import Path
 
 from utils.utils import *
-from utils.models import VGGEcoder,Decoder
+from utils.models import VGGEncoder,Decoder
 
 import torch.optim as optim
 
@@ -51,7 +51,7 @@ def parse_arguments():
     parser.add_argument("--epochs",type=int,default=2,
                         help="Number of epochs")
     
-    parser.add_argument("--contet_weight",type=float,default=1.0,
+    parser.add_argument("--content_weight",type=float,default=1.0,
                         help="Content Weight")
     
     parser.add_argument("--style_weight",type=float,default=10.0,
@@ -104,7 +104,7 @@ def main():
     print('Number of batches in content dataset :',len(content_dataloader))
     print('Number of batches in Style dataset :',len(style_dataloader))
     
-    encoder=VGGEcoder(args.vgg).to(device)
+    encoder=VGGEncoder(args.vgg).to(device)
     
     decoder=Decoder().to(device)
     
@@ -113,8 +113,18 @@ def main():
     scheduler=optim.lr_scheduler.LambdaLR(optimizer=optimizer,lr_lambda=lambda epoch: 1.0 / (1.0 + args.lr_decay * epoch))
     
     if args.resume:
-        decoder.load_state_dict(torch.load(args.decoder_path))
-        optimizer.load_state_dict(torch.load(args.optimizer_path))
+        state_dict=torch.load(args.decoder_path,map_location=device,weights_only=True)
+        new_state_dict={}
+        for k,v in state_dict.items():
+            if k.startswith('decoder.'):
+                new_state_dict[k]=v
+            elif k.startswith('model.'):
+                new_state_dict[k.replace('model.','decoder.',1)]=v
+            else:
+                new_state_dict['decoder.'+k]=v
+        decoder.load_state_dict(new_state_dict)
+        if args.optimizer_path:
+            optimizer.load_state_dict(torch.load(args.optimizer_path,map_location=device,weights_only=False))
     
     print('Training...')
     
@@ -137,18 +147,19 @@ def main():
             content_batch=content_batch.to(device)
             style_batch=style_batch.to(device)
             
-            c_feats=encoder(content_batch)
-            s_feats=encoder(style_batch)
+            with torch.no_grad():
+                c_feats=encoder(content_batch)
+                s_feats=encoder(style_batch)
             
-            t=adaptive_instance_normalication(c_feats[-1],s_feats[-1])
+            t=adaptive_instance_normalization(c_feats[-1],s_feats[-1])
             
             g=decoder(t)
         
             g_feats=encoder(g)
             
-            loss_c=mse_loss(g_feats[-1],t) * args.contet_weight
+            loss_c=mse_loss(g_feats[-1],t) * args.content_weight
             
-            loss_s=0
+            loss_s=torch.tensor(0.0,device=device)
             
             for g_f,s_f in zip(g_feats,s_feats):
                 g_mean,g_std=calc_mean_std(g_f)
@@ -172,9 +183,10 @@ def main():
             
         scheduler.step()
         
-        runnig_loss /=len(content_dataloader)
-        running_closs /=len(content_dataloader)
-        runnig_sloss /=len(content_dataloader)
+        num_batches=min(len(content_dataloader),len(style_dataloader))
+        runnig_loss /=num_batches
+        running_closs /=num_batches
+        runnig_sloss /=num_batches
         
         if (epoch+1) % args.log_interval == 0:
             tqdm.write(f"Iter {epoch+1} : Loss {runnig_loss:4f} , Content Loss {running_closs:4f} , Style Loss {runnig_sloss:4f}")

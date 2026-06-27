@@ -1,1 +1,5 @@
+__init__.py
 __pycache__
+content_data/
+style_data/
+experiment/
