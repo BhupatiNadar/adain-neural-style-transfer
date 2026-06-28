@@ -52,7 +52,7 @@ The AdaIN style transfer pipeline consists of three stages:
 ```
 ┌─────────────┐       ┌──────────────┐       ┌─────────────┐
 │  Content     │       │              │       │             │
-│  Image       │──────▶│  VGG-19      │──────▶│  Content    │
+│  Image       │─────▶│  VGG-19      │──────▶│  Content    │
 │              │       │  Encoder     │       │  Features   │─────┐
 └─────────────┘       │  (frozen)    │       └─────────────┘     │
                       └──────────────┘                           │
@@ -191,7 +191,7 @@ NST_project/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/<your-username>/adain-neural-style-transfer.git
+   git clone https://github.com/BhupatiNadar/adain-neural-style-transfer.git
    cd adain-neural-style-transfer
    ```
 
@@ -310,14 +310,6 @@ L_total = λ_content × L_content + λ_style × L_style
 
 ## Results
 
-<!-- 
-  📸 HOW TO ADD YOUR RESULTS:
-  
-  1. Create a folder called "examples/" in the project root
-  2. Save your content, style, and output images there
-  3. Replace the placeholder paths below with your actual image paths
-  4. You can add as many rows as you like!
--->
 
 ### Style Transfer Examples
 
