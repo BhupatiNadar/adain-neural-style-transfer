@@ -1,0 +1,5 @@
+Flask
+numpy
+torchvision
+torch
+gunicorn
