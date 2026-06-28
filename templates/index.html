@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Transform your photos with AI-powered Adaptive Instance Normalization neural style transfer. Upload a content image and a style reference to create stunning artistic compositions in real time.">
+    <title>AdaIN Neural Style Transfer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <!-- ═══════ LOADING OVERLAY ═══════ -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Applying style transfer&hellip;</p>
+    </div>
+
+    <!-- ═══════ TOAST CONTAINER ═══════ -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <div class="container">
+
+        <!-- ═══════ HERO ═══════ -->
+        <header class="hero">
+            <div class="hero__badge">
+                <span class="hero__badge-dot"></span>
+                AI‑Powered · Real‑Time
+            </div>
+            <h1 class="hero__title">Neural Style Transfer</h1>
+            <p class="hero__subtitle">
+                Blend the content of any photograph with the artistic style of another.
+                Powered by Adaptive Instance Normalization (AdaIN).
+            </p>
+        </header>
+
+        <!-- ═══════ UPLOAD SECTION ═══════ -->
+        <section class="upload-section" aria-label="Image uploads">
+
+            <!-- Content Image -->
+            <div class="upload-zone glass-card" id="content-zone">
+                <input type="file" id="content-input" accept="image/jpeg,image/png,image/webp" hidden>
+
+                <div class="upload-zone__placeholder">
+                    <svg class="upload-zone__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                    <p class="upload-zone__label">Content Image</p>
+                    <p class="upload-zone__hint">Drag &amp; drop or click to browse</p>
+                </div>
+
+                <div class="upload-zone__preview-container">
+                    <img class="upload-zone__preview" alt="Content preview">
+                    <div class="upload-zone__overlay">
+                        <span class="upload-zone__filename"></span>
+                        <button class="upload-zone__remove" type="button">Remove</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Style Image -->
+            <div class="upload-zone glass-card" id="style-zone">
+                <input type="file" id="style-input" accept="image/jpeg,image/png,image/webp" hidden>
+
+                <div class="upload-zone__placeholder">
+                    <svg class="upload-zone__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    <p class="upload-zone__label">Style Image</p>
+                    <p class="upload-zone__hint">Drag &amp; drop or click to browse</p>
+                </div>
+
+                <div class="upload-zone__preview-container">
+                    <img class="upload-zone__preview" alt="Style preview">
+                    <div class="upload-zone__overlay">
+                        <span class="upload-zone__filename"></span>
+                        <button class="upload-zone__remove" type="button">Remove</button>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ═══════ CONTROLS ═══════ -->
+        <div class="controls glass-card">
+            <div class="controls__inner">
+
+                <div class="slider-group">
+                    <div class="slider-group__header">
+                        <label class="slider-group__label" for="alpha-slider">Style Strength (Alpha)</label>
+                        <span class="slider-group__value" id="alpha-value">1.0</span>
+                    </div>
+                    <input type="range" id="alpha-slider" class="slider" min="0" max="1" step="0.1" value="1.0">
+                </div>
+
+                <button class="generate-btn" id="generate-btn" type="button">
+                    <span class="generate-btn__glow"></span>
+                    <svg class="generate-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                    </svg>
+                    Generate
+                </button>
+
+            </div>
+        </div>
+
+        <!-- ═══════ OUTPUT SECTION ═══════ -->
+        <section class="output-section" id="output-section">
+            <h2 class="output-section__title">Stylized Output</h2>
+
+            <div class="output-card glass-card">
+
+                <div class="output-card__empty" id="output-empty">
+                    <svg class="output-card__empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                    <p>Your stylized image will appear here</p>
+                </div>
+
+                <div class="output-card__image-wrapper" id="output-wrapper">
+                    <img class="output-card__image" id="output-image" alt="Stylized output">
+                    <div class="output-card__actions">
+                        <button class="btn-download" id="download-btn" type="button">
+                            <svg class="btn-download__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            Download
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ═══════ HOW IT WORKS ═══════ -->
+        <section class="how-section" aria-label="How it works">
+            <h2 class="how-section__title">How It Works</h2>
+
+            <div class="how-steps">
+                <div class="how-step glass-card">
+                    <div class="how-step__number">1</div>
+                    <h3 class="how-step__title">Encode</h3>
+                    <p class="how-step__desc">Both images are passed through a pre-trained VGG‑19 encoder to extract deep feature representations.</p>
+                </div>
+                <div class="how-step glass-card">
+                    <div class="how-step__number">2</div>
+                    <h3 class="how-step__title">Align</h3>
+                    <p class="how-step__desc">AdaIN aligns the content features' mean and variance to match those of the style features in real time.</p>
+                </div>
+                <div class="how-step glass-card">
+                    <div class="how-step__number">3</div>
+                    <h3 class="how-step__title">Decode</h3>
+                    <p class="how-step__desc">A trained decoder network reconstructs the final image from the stylized feature space back into pixels.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════ FOOTER ═══════ -->
+        <footer class="footer">
+            <p>Built with <a href="https://arxiv.org/abs/1703.06868" target="_blank" rel="noopener">AdaIN</a> · PyTorch &amp; Flask</p>
+        </footer>
+
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

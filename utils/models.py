@@ -107,7 +107,7 @@ class Decoder(nn.Module):
     def __init__(self):
         super(Decoder,self).__init__()
         
-        self.decoder=nn.Sequential(
+        self.net=nn.Sequential(
             nn.ReflectionPad2d((1, 1, 1, 1)),
             nn.Conv2d(512, 256, (3, 3)),
             nn.ReLU(),
@@ -140,4 +140,4 @@ class Decoder(nn.Module):
         )  
         
     def forward(self,input):
-        return self.decoder(input)    
+        return self.net(input)    
