@@ -86,6 +86,7 @@ AdaIN(x, y) = σ(y) * ( (x − μ(x)) / σ(x) ) + μ(y)
 ```
 
 Where:
+
 - `x` = content features, `y` = style features
 - `μ` = channel-wise mean, `σ` = channel-wise standard deviation
 
@@ -97,12 +98,12 @@ Where:
 
 The encoder uses the first few layers (up to `relu4_1`) of a **pre-trained VGG-19** network (with normalized weights). It extracts multi-level features at four ReLU activation points:
 
-| Block | Layers | Output Channels | Feature Level |
-|-------|--------|-----------------|---------------|
-| `enc1` | Conv → ReLU (×2) | 64 | `relu1_1` |
-| `enc2` | MaxPool → Conv → ReLU (×2) | 128 | `relu2_1` |
-| `enc3` | MaxPool → Conv → ReLU (×4) | 256 | `relu3_1` |
-| `enc4` | MaxPool → Conv → ReLU (×4) | 512 | `relu4_1` |
+| Block  | Layers                     | Output Channels | Feature Level |
+| ------ | -------------------------- | --------------- | ------------- |
+| `enc1` | Conv → ReLU (×2)           | 64              | `relu1_1`     |
+| `enc2` | MaxPool → Conv → ReLU (×2) | 128             | `relu2_1`     |
+| `enc3` | MaxPool → Conv → ReLU (×4) | 256             | `relu3_1`     |
+| `enc4` | MaxPool → Conv → ReLU (×4) | 512             | `relu4_1`     |
 
 - All encoder parameters are **frozen** (`requires_grad = False`)
 - During **training**: returns all 4 feature maps `[h1, h2, h3, h4]` (for style loss)
@@ -122,12 +123,12 @@ A symmetric decoder that mirrors the encoder architecture, reconstructing an ima
 
 ### Core Functions (`utils/utils.py`)
 
-| Function | Description |
-|----------|-------------|
+| Function                                          | Description                                                                                    |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | `adaptive_instance_normalization(content, style)` | Performs the AdaIN operation — normalizes content features and re-scales with style statistics |
-| `calc_mean_std(feat)` | Computes per-channel mean and standard deviation across spatial dimensions |
-| `get_transform(size, crop, final_size)` | Builds a torchvision transform pipeline for resizing/cropping training images |
-| `ImageFolderDataset` | Custom PyTorch `Dataset` that loads `.jpg`/`.png`/`.jpeg` images from a flat directory |
+| `calc_mean_std(feat)`                             | Computes per-channel mean and standard deviation across spatial dimensions                     |
+| `get_transform(size, crop, final_size)`           | Builds a torchvision transform pipeline for resizing/cropping training images                  |
+| `ImageFolderDataset`                              | Custom PyTorch `Dataset` that loads `.jpg`/`.png`/`.jpeg` images from a flat directory         |
 
 ---
 
@@ -190,12 +191,14 @@ NST_project/
 ### Steps
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/BhupatiNadar/adain-neural-style-transfer.git
    cd adain-neural-style-transfer
    ```
 
 2. **Create a virtual environment** (recommended)
+
    ```bash
    python -m venv venv
    source venv/bin/activate      # Linux/macOS
@@ -203,16 +206,17 @@ NST_project/
    ```
 
 3. **Install dependencies**
+
    ```bash
    pip install -r requirements.txt
    ```
 
 4. **Download pre-trained weights**
 
-   | File | Size | Description |
-   |------|------|-------------|
+   | File                 | Size   | Description                                     |
+   | -------------------- | ------ | ----------------------------------------------- |
    | `vgg_normalized.pth` | ~80 MB | Pre-trained VGG-19 encoder (normalized weights) |
-   | `decoder_final.pth` | ~14 MB | Trained AdaIN decoder |
+   | `decoder_final.pth`  | ~14 MB | Trained AdaIN decoder                           |
 
    Place both `.pth` files in the project root directory.
 
@@ -266,6 +270,7 @@ python train.py \
 ```
 
 **Training datasets:**
+
 - **Content images**: [MS COCO](https://cocodataset.org/) (e.g., `test2017` split)
 - **Style images**: [WikiArt](https://www.wikiart.org/) or any art dataset
 
@@ -273,27 +278,27 @@ python train.py \
 
 ## Training Arguments
 
-| Argument | Type | Default | Description |
-|----------|------|---------|-------------|
-| `--content_dir` | `str` | — | Path to content image directory |
-| `--style_dir` | `str` | — | Path to style image directory |
-| `--vgg` | `str` | `vgg_normalized.pth` | Path to pre-trained VGG-19 weights |
-| `--experiment` | `str` | `experiment1` | Experiment name (output folder under `experiment/`) |
-| `--final_size` | `int` | `256` | Final crop size for training images |
-| `--content_size` | `int` | `512` | Resize content images to this size before cropping |
-| `--style_size` | `int` | `512` | Resize style images to this size before cropping |
-| `--crop` | `flag` | `True` | Enable random cropping |
-| `--batch_size` | `int` | `4` | Batch size |
-| `--lr` | `float` | `1e-4` | Learning rate |
-| `--lr_decay` | `float` | `5e-5` | Learning rate decay factor |
-| `--epochs` | `int` | `2` | Number of training epochs |
-| `--content_weight` | `float` | `1.0` | Weight for content loss |
-| `--style_weight` | `float` | `10.0` | Weight for style loss |
-| `--log_interval` | `int` | `1` | Print loss every N epochs |
-| `--save_interval` | `int` | `2` | Save checkpoint every N epochs |
-| `--resume` | `flag` | `False` | Resume training from checkpoint |
-| `--decoder_path` | `str` | `None` | Path to decoder checkpoint (for resuming) |
-| `--optimizer_path` | `str` | `None` | Path to optimizer checkpoint (for resuming) |
+| Argument           | Type    | Default              | Description                                         |
+| ------------------ | ------- | -------------------- | --------------------------------------------------- |
+| `--content_dir`    | `str`   | —                    | Path to content image directory                     |
+| `--style_dir`      | `str`   | —                    | Path to style image directory                       |
+| `--vgg`            | `str`   | `vgg_normalized.pth` | Path to pre-trained VGG-19 weights                  |
+| `--experiment`     | `str`   | `experiment1`        | Experiment name (output folder under `experiment/`) |
+| `--final_size`     | `int`   | `256`                | Final crop size for training images                 |
+| `--content_size`   | `int`   | `512`                | Resize content images to this size before cropping  |
+| `--style_size`     | `int`   | `512`                | Resize style images to this size before cropping    |
+| `--crop`           | `flag`  | `True`               | Enable random cropping                              |
+| `--batch_size`     | `int`   | `4`                  | Batch size                                          |
+| `--lr`             | `float` | `1e-4`               | Learning rate                                       |
+| `--lr_decay`       | `float` | `5e-5`               | Learning rate decay factor                          |
+| `--epochs`         | `int`   | `2`                  | Number of training epochs                           |
+| `--content_weight` | `float` | `1.0`                | Weight for content loss                             |
+| `--style_weight`   | `float` | `10.0`               | Weight for style loss                               |
+| `--log_interval`   | `int`   | `1`                  | Print loss every N epochs                           |
+| `--save_interval`  | `int`   | `2`                  | Save checkpoint every N epochs                      |
+| `--resume`         | `flag`  | `False`              | Resume training from checkpoint                     |
+| `--decoder_path`   | `str`   | `None`               | Path to decoder checkpoint (for resuming)           |
+| `--optimizer_path` | `str`   | `None`               | Path to optimizer checkpoint (for resuming)         |
 
 ### Training Loss
 
@@ -309,7 +314,6 @@ L_total = λ_content × L_content + λ_style × L_style
 ---
 
 ## Results
-
 
 ### Style Transfer Examples
 
@@ -341,9 +345,9 @@ The `alpha` parameter controls how much of the style is applied. Here's how vary
 
 <!-- Replace with actual training output images from experiment/ folder -->
 
-| ![Training Output](experiment/Trial/output_1.jpg) |
-|:---:|
-| *Training output grid — Row 1: Content batch, Row 2: Style batch, Row 3: Generated output* |
+|                     ![Training Output](experiment/Trial/output_1.jpg)                      |
+| :----------------------------------------------------------------------------------------: |
+| _Training output grid — Row 1: Content batch, Row 2: Style batch, Row 3: Generated output_ |
 
 ---
 
@@ -355,15 +359,16 @@ Run style transfer on uploaded images.
 
 **Request** (`multipart/form-data`):
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `content` | `file` | ✅ | Content image (JPEG/PNG/WebP) |
-| `style` | `file` | ✅ | Style image (JPEG/PNG/WebP) |
-| `alpha` | `float` | ❌ | Style strength, 0.0–1.0 (default: `1.0`) |
+| Field     | Type    | Required | Description                              |
+| --------- | ------- | -------- | ---------------------------------------- |
+| `content` | `file`  | ✅       | Content image (JPEG/PNG/WebP)            |
+| `style`   | `file`  | ✅       | Style image (JPEG/PNG/WebP)              |
+| `alpha`   | `float` | ❌       | Style strength, 0.0–1.0 (default: `1.0`) |
 
 **Response**: `image/png` — the stylized output image
 
 **Error Response** (`application/json`):
+
 ```json
 {
   "error": "Both content and style images are required."
@@ -371,6 +376,7 @@ Run style transfer on uploaded images.
 ```
 
 **Example** (cURL):
+
 ```bash
 curl -X POST http://localhost:5000/transfer \
   -F "content=@photo.jpg" \
@@ -413,22 +419,22 @@ CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
 
 ## Tech Stack
 
-| Component | Technology |
-|-----------|-----------|
-| **Deep Learning** | PyTorch, torchvision |
-| **Encoder** | VGG-19 (pre-trained, normalized weights) |
-| **Web Server** | Flask |
-| **Frontend** | HTML5, CSS3 (glassmorphism), Vanilla JavaScript |
-| **Production Server** | Gunicorn |
-| **Training Data** | MS COCO (content), WikiArt (style) |
+| Component             | Technology                                      |
+| --------------------- | ----------------------------------------------- |
+| **Deep Learning**     | PyTorch, torchvision                            |
+| **Encoder**           | VGG-19 (pre-trained, normalized weights)        |
+| **Web Server**        | Flask                                           |
+| **Frontend**          | HTML5, CSS3 (glassmorphism), Vanilla JavaScript |
+| **Production Server** | Gunicorn                                        |
+| **Training Data**     | MS COCO (content), WikiArt (style)              |
 
 ---
 
 ## References
 
-1. **Huang, X., & Belongie, S.** (2017). *Arbitrary Style Transfer in Real-time with Adaptive Instance Normalization*. [arXiv:1703.06868](https://arxiv.org/abs/1703.06868)
-2. **Gatys, L. A., Ecker, A. S., & Bethge, M.** (2016). *Image Style Transfer Using Convolutional Neural Networks*. CVPR 2016.
-3. **Simonyan, K., & Zisserman, A.** (2015). *Very Deep Convolutional Networks for Large-Scale Image Recognition*. [arXiv:1409.1556](https://arxiv.org/abs/1409.1556)
+1. **Huang, X., & Belongie, S.** (2017). _Arbitrary Style Transfer in Real-time with Adaptive Instance Normalization_. [arXiv:1703.06868](https://arxiv.org/abs/1703.06868)
+2. **Gatys, L. A., Ecker, A. S., & Bethge, M.** (2016). _Image Style Transfer Using Convolutional Neural Networks_. CVPR 2016.
+3. **Simonyan, K., & Zisserman, A.** (2015). _Very Deep Convolutional Networks for Large-Scale Image Recognition_. [arXiv:1409.1556](https://arxiv.org/abs/1409.1556)
 
 ---
 
