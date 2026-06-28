@@ -321,9 +321,9 @@ Add your own results by placing images in an `examples/` folder and updating the
 
 | Content Image | Style Image | Output (α=1.0) |
 |:---:|:---:|:---:|
-| ![Content 1](examples/content_1.jpg) | ![Style 1](examples/style_1.jpg) | ![Output 1](examples/output_1.jpg) |
-| ![Content 2](examples/content_2.jpg) | ![Style 2](examples/style_2.jpg) | ![Output 2](examples/output_2.jpg) |
-| ![Content 3](examples/content_3.jpg) | ![Style 3](examples/style_3.jpg) | ![Output 3](examples/output_3.jpg) |
+| <img src="examples/content_1.jpg" width="250" height="250" alt="Content 1"> | <img src="examples/style_1.jpg" width="250" height="250" alt="Style 1"> | <img src="examples/output_1.jpg" width="250" height="250" alt="Output 1"> |
+| <img src="examples/content_2.jpg" width="250" height="250" alt="Content 2"> | <img src="examples/style_2.jpg" width="250" height="250" alt="Style 2"> | <img src="examples/output_2.jpg" width="250" height="250" alt="Output 2"> |
+| <img src="examples/content_3.jpg" width="250" height="250" alt="Content 3"> | <img src="examples/style_3.jpg" width="250" height="250" alt="Style 3"> | <img src="examples/output_3.jpg" width="250" height="250" alt="Output 3"> |
 
 ### Alpha Blending (Style Strength)
 
@@ -331,13 +331,13 @@ The `alpha` parameter controls how much of the style is applied. Here's how vary
 
 | α = 0.0 (Content Only) | α = 0.25 | α = 0.5 | α = 0.75 | α = 1.0 (Full Style) |
 |:---:|:---:|:---:|:---:|:---:|
-| ![Alpha 0.0](examples/alpha_0.0.jpg) | ![Alpha 0.25](examples/alpha_0.25.jpg) | ![Alpha 0.5](examples/alpha_0.5.jpg) | ![Alpha 0.75](examples/alpha_0.75.jpg) | ![Alpha 1.0](examples/alpha_1.0.jpg) |
+| <img src="examples/alpha_0.0.jpg" width="150" height="150" alt="Alpha 0.0"> | <img src="examples/alpha_0.25.jpg" width="150" height="150" alt="Alpha 0.25"> | <img src="examples/alpha_0.5.jpg" width="150" height="150" alt="Alpha 0.5"> | <img src="examples/alpha_0.75.jpg" width="150" height="150" alt="Alpha 0.75"> | <img src="examples/alpha_1.0.jpg" width="150" height="150" alt="Alpha 1.0"> |
 
 ### Web Application Screenshot
 
 <!-- Replace with an actual screenshot of your running web app -->
 
-| ![Web App Screenshot](examples/web_app_screenshot.png) |
+| <img src="examples/web_app_screenshot.png" width="600" alt="Web App Screenshot"> |
 |:---:|
 | *The AdaIN Neural Style Transfer web interface* |
 
@@ -345,8 +345,8 @@ The `alpha` parameter controls how much of the style is applied. Here's how vary
 
 <!-- Replace with actual training output images from experiment/ folder -->
 
-|                     ![Training Output](experiment/Trial/output_1.jpg)                      |
-| :----------------------------------------------------------------------------------------: |
+| <img src="examples/Training_img.jpg" width="600" alt="Training Output"> |
+| :---: |
 | _Training output grid — Row 1: Content batch, Row 2: Style batch, Row 3: Generated output_ |
 
 ---
